@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Abruzzese Medio — Creator digitale abruzzese Roberto Pavone. 83K follower Instagram, 37K TikTok, 9,7M views/mese. Storie, emozioni e territorio dalla montagna al mare.">
+  <meta property="og:title" content="Abruzzese Medio">
+  <meta property="og:description" content="100% ABBruzzese. FORTE & GENTILE. Storie, emozioni e territorio dalla montagna al mare.">
+  <title>Abruzzese Medio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ═══ VARIABLES ═══ */
+    :root {
+      --green-dark:  #1A5C30;
+      --green:       #2B8B4A;
+      --green-light: #3AAD5E;
+      --black:       #0d0d0d;
+      --off-white:   #f4f1eb;
+      --muted:       #a0a09a;
+      --border:      rgba(244, 241, 235, 0.07);
+    }
+
+    /* ═══ RESET ═══ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--black);
+      color: var(--off-white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 300;
+    }
+
+    /* ═══ NOISE OVERLAY ═══ */
+    #noise {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      pointer-events: none;
+      opacity: 0.04;
+      background-repeat: repeat;
+      background-size: 256px 256px;
+    }
+
+    /* ═══ LAYOUT ═══ */
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* ═══ FADE-UP ═══ */
+    .fu {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .fu.in { opacity: 1; transform: none; }
+
+    /* ═══════════════════════════════════
+       HERO
+    ═══════════════════════════════════ */
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 96px 0 64px;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(58, 173, 94, 0.07);
+      border: 1px solid rgba(58, 173, 94, 0.22);
+      border-radius: 100px;
+      padding: 7px 18px 7px 13px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-light);
+      width: fit-content;
+      margin-bottom: 44px;
+    }
+
+    .bdot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green-light);
+      flex-shrink: 0;
+      animation: bdot 2s ease-in-out infinite;
+    }
+
+    @keyframes bdot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* Title */
+    .htitle {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(72px, 13vw, 160px);
+      line-height: 0.87;
+      letter-spacing: -0.01em;
+      color: var(--off-white);
+      margin-bottom: 36px;
+    }
+    .htitle span { color: var(--green); display: block; }
+
+    /* Tagline */
+    .tagline {
+      font-size: clamp(14px, 1.6vw, 17px);
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 480px;
+    }
+
+    /* Stats */
+    .hero-stats {
+      border-top: 1px solid var(--border);
+    }
+
+    .stats {
+      display: flex;
+    }
+
+    .stat {
+      flex: 1;
+      padding: 30px 0 30px 28px;
+      border-right: 1px solid var(--border);
+    }
+    .stat:first-child { padding-left: 0; }
+    .stat:last-child  { border-right: none; }
+
+    .snum {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 4.5vw, 54px);
+      color: var(--off-white);
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+
+    .slbl {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ═══════════════════════════════════
+       NEWSLETTER
+    ═══════════════════════════════════ */
+    .newsletter {
+      padding: 128px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 1px;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    .stitle {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 7vw, 96px);
+      line-height: 0.9;
+      color: var(--off-white);
+      margin-bottom: 20px;
+    }
+
+    .sbody {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 440px;
+      margin-bottom: 40px;
+    }
+
+    .nl-form {
+      display: flex;
+      max-width: 500px;
+      margin-bottom: 14px;
+    }
+
+    .nl-in {
+      flex: 1;
+      background: rgba(244, 241, 235, 0.04);
+      border: 1px solid rgba(244, 241, 235, 0.1);
+      border-right: none;
+      border-radius: 100px 0 0 100px;
+      padding: 15px 24px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--off-white);
+      outline: none;
+      transition: border-color 0.25s;
+    }
+    .nl-in::placeholder { color: rgba(160, 160, 154, 0.55); }
+    .nl-in:focus { border-color: var(--green); }
+
+    .nl-btn {
+      background: var(--green);
+      color: var(--off-white);
+      border: 1px solid var(--green);
+      border-radius: 0 100px 100px 0;
+      padding: 15px 28px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    .nl-btn:hover {
+      background: var(--green-light);
+      border-color: var(--green-light);
+    }
+
+    .nl-note {
+      font-size: 13px;
+      font-weight: 300;
+      color: rgba(160, 160, 154, 0.6);
+    }
+
+    /* ═══════════════════════════════════
+       PILLARS
+    ═══════════════════════════════════ */
+    .pillars {
+      padding: 128px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .pillars-hdr { margin-bottom: 56px; }
+
+    .pgrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1px;
+      background: rgba(244, 241, 235, 0.05);
+      border: 1px solid rgba(244, 241, 235, 0.05);
+    }
+
+    .pcard {
+      background: var(--black);
+      padding: 44px 36px;
+      position: relative;
+      transition: background 0.3s;
+    }
+    .pcard::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--green-dark);
+      transition: background 0.3s;
+    }
+    .pcard:hover { background: rgba(43, 139, 74, 0.04); }
+    .pcard:hover::before { background: var(--green); }
+
+    .picon {
+      font-size: 28px;
+      display: block;
+      margin-bottom: 22px;
+    }
+
+    .ptitle {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.03em;
+      color: var(--off-white);
+      margin-bottom: 10px;
+    }
+
+    .ptext {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ═══════════════════════════════════
+       SOCIAL
+    ═══════════════════════════════════ */
+    .social {
+      padding: 128px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .social .stitle { margin-bottom: 44px; }
+
+    .slinks {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .sbtn {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(244, 241, 235, 0.14);
+      border-radius: 100px;
+      padding: 14px 36px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--off-white);
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+    }
+    .sbtn:hover {
+      border-color: var(--green);
+      background: rgba(43, 139, 74, 0.1);
+      color: var(--green-light);
+    }
+
+    /* ═══════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 0;
+    }
+
+    .foot {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .fbrand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.02em;
+      color: var(--off-white);
+    }
+
+    .finfo {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--muted);
+      text-align: right;
+      line-height: 2;
+    }
+    .finfo a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .finfo a:hover { color: var(--green-light); }
+    .finfo strong { color: var(--off-white); font-weight: 500; }
+
+    /* ═══════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════ */
+    @media (max-width: 600px) {
+      .wrap { padding: 0 20px; }
+
+      .hero-body { padding: 72px 0 48px; }
+      .htitle { margin-bottom: 24px; }
+
+      /* Stats: 2×2 grid */
+      .hero-stats .wrap { padding: 0; }
+      .stats { flex-wrap: wrap; }
+      .stat {
+        flex: 0 0 50%;
+        padding: 22px 16px;
+        border-right: none;
+      }
+      .stat:first-child { padding-left: 20px; }
+      .stat:nth-child(odd)  { border-right: 1px solid var(--border); }
+      .stat:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+
+      /* Sections */
+      .newsletter, .pillars, .social { padding: 80px 0; }
+
+      /* Newsletter form: stacked */
+      .nl-form {
+        flex-direction: column;
+        gap: 10px;
+        max-width: 100%;
+      }
+      .nl-in {
+        border-right: 1px solid rgba(244, 241, 235, 0.1);
+        border-radius: 100px;
+      }
+      .nl-in:focus { border-color: var(--green); }
+      .nl-btn { border-radius: 100px; width: 100%; }
+
+      /* Pillar cards */
+      .pcard { padding: 32px 24px; }
+
+      /* Footer */
+      .foot { flex-direction: column; align-items: center; gap: 16px; }
+      .finfo { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Film grain overlay (generated by JS canvas) -->
+  <div id="noise" aria-hidden="true"></div>
+
+  <!-- ═══════ HERO ═══════ -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="wrap">
+        <div class="badge fu">
+          <span class="bdot"></span>
+          Creator Digitale · Abruzzo
+        </div>
+        <h1 class="htitle fu" style="transition-delay:.12s">
+          Abruzzese<span>Medio</span>
+        </h1>
+        <p class="tagline fu" style="transition-delay:.24s">
+          100% ABBruzzese. FORTE &amp; GENTILE. — Storie, emozioni e
+          territorio — dalla montagna al mare.
+        </p>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="wrap">
+        <div class="stats fu" style="transition-delay:.36s">
+          <div class="stat">
+            <div class="snum" data-target="83" data-suffix="K">83K</div>
+            <div class="slbl">Follower IG</div>
+          </div>
+          <div class="stat">
+            <div class="snum" data-target="37" data-suffix="K">37K</div>
+            <div class="slbl">Follower TikTok</div>
+          </div>
+          <div class="stat">
+            <div class="snum" data-target="9.7" data-suffix="M" data-dec="1">9,7M</div>
+            <div class="slbl">Views / mese</div>
+          </div>
+          <div class="stat">
+            <div class="snum" data-target="100" data-suffix="+">100+</div>
+            <div class="slbl">Eventi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ NEWSLETTER ═══════ -->
+  <section class="newsletter">
+    <div class="wrap">
+      <p class="eyebrow fu">Newsletter</p>
+      <h2 class="stitle fu" style="transition-delay:.1s">Resta nel giro</h2>
+      <p class="sbody fu" style="transition-delay:.2s">
+        Ricevi in anteprima notizie sugli eventi, le collaborazioni e tutto
+        quello che succede nel mondo di Abruzzese Medio. Niente spam —
+        solo roba che vale.
+      </p>
+      <!-- SOSTITUIRE CON ENDPOINT BREVO -->
+      <form class="nl-form fu" action="#" method="post" style="transition-delay:.3s">
+        <input class="nl-in" type="email" name="email" placeholder="La tua email" required>
+        <button class="nl-btn" type="submit">Iscriviti</button>
+      </form>
+      <p class="nl-note fu" style="transition-delay:.4s">Niente spam. Parola di abruzzese.</p>
+    </div>
+  </section>
+
+  <!-- ═══════ PILLARS ═══════ -->
+  <section class="pillars">
+    <div class="wrap">
+      <div class="pillars-hdr">
+        <p class="eyebrow fu">Cosa trovi qui</p>
+        <h2 class="stitle fu" style="transition-delay:.1s">Il mondo di<br>Abruzzese Medio</h2>
+      </div>
+      <div class="pgrid">
+        <div class="pcard fu">
+          <span class="picon">📍</span>
+          <div class="ptitle">Territorio</div>
+          <p class="ptext">L'Abruzzo raccontato dal di dentro, con autenticità e orgoglio regionale.</p>
+        </div>
+        <div class="pcard fu" style="transition-delay:.08s">
+          <span class="picon">🎤</span>
+          <div class="ptitle">Eventi</div>
+          <p class="ptext">Oltre 100 eventi, 2.000 studenti coinvolti, TV e giornali regionali.</p>
+        </div>
+        <div class="pcard fu" style="transition-delay:.16s">
+          <span class="picon">📲</span>
+          <div class="ptitle">Social</div>
+          <p class="ptext">Reach mensile da 2,9 milioni. Presente su Instagram, TikTok e Facebook.</p>
+        </div>
+        <div class="pcard fu" style="transition-delay:.24s">
+          <span class="picon">🤝</span>
+          <div class="ptitle">Partnership</div>
+          <p class="ptext">Collaborazioni su misura per realtà locali, eventi e brand affini al territorio.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ SOCIAL ═══════ -->
+  <section class="social">
+    <div class="wrap">
+      <p class="eyebrow fu" style="justify-content:center">Dove mi trovi</p>
+      <h2 class="stitle fu" style="transition-delay:.1s">Seguimi</h2>
+      <div class="slinks fu" style="transition-delay:.2s">
+        <a class="sbtn" href="https://www.instagram.com/abruzzesemedio" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a class="sbtn" href="https://www.tiktok.com/@abbruzzesemedio" target="_blank" rel="noopener noreferrer">TikTok</a>
+        <a class="sbtn" href="https://www.facebook.com/Abbruzzesemedio" target="_blank" rel="noopener noreferrer">Facebook</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ FOOTER ═══════ -->
+  <footer>
+    <div class="wrap">
+      <div class="foot">
+        <div class="fbrand">Abruzzese Medio</div>
+        <div class="finfo">
+          <a href="mailto:abruzzesemedio@gmail.com">abruzzesemedio@gmail.com</a><br>
+          Referente commerciale: <strong>Enrico Corazzini</strong><br>
+          <a href="tel:+393452389772">+39 345 238 9772</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── Film grain via canvas ── */
+    (function () {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const x = c.getContext('2d');
+      const d = x.createImageData(256, 256);
+      for (let i = 0; i < d.data.length; i += 4) {
+        const v = Math.random() * 255 | 0;
+        d.data[i] = d.data[i + 1] = d.data[i + 2] = v;
+        d.data[i + 3] = 255;
+      }
+      x.putImageData(d, 0, 0);
+      document.getElementById('noise').style.backgroundImage = `url(${c.toDataURL()})`;
+    })();
+
+    /* ── Fade-up on scroll ── */
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+    document.querySelectorAll('.fu').forEach(el => io.observe(el));
+
+    /* ── Count-up for stats ── */
+    const cio = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const target = parseFloat(el.dataset.target);
+        const suffix = el.dataset.suffix || '';
+        const dec    = parseInt(el.dataset.dec || 0);
+        const dur    = 1400;
+        const t0     = performance.now();
+        (function step(now) {
+          const p    = Math.min((now - t0) / dur, 1);
+          const ease = 1 - Math.pow(1 - p, 3);
+          const val  = target * ease;
+          el.textContent = dec
+            ? val.toFixed(dec).replace('.', ',') + suffix
+            : Math.floor(val) + suffix;
+          if (p < 1) requestAnimationFrame(step);
+        })(t0);
+        cio.unobserve(el);
+      });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('.snum[data-target]').forEach(el => cio.observe(el));
+  </script>
+</body>
+</html>
