@@ -86,7 +86,7 @@
       flex: 1;
       display: flex;
       align-items: center;
-      padding: 96px 0 64px;
+      padding: 0 0 64px;
       text-align: center;
     }
 
@@ -182,6 +182,7 @@
     .newsletter {
       padding: 128px 0;
       border-top: 1px solid var(--border);
+      text-align: center;
     }
 
     .eyebrow {
@@ -218,13 +219,13 @@
       color: var(--muted);
       line-height: 1.75;
       max-width: 440px;
-      margin-bottom: 40px;
+      margin: 0 auto 40px;
     }
 
     .nl-form {
       display: flex;
       max-width: 500px;
-      margin-bottom: 14px;
+      margin: 0 auto 14px;
     }
 
     .nl-in {
@@ -450,28 +451,6 @@
     <div class="hero-body">
       <div class="wrap">
         <img class="hero-logo fu" src="logo.jpeg" alt="Abruzzese Medio">
-        <p class="tagline fu" style="transition-delay:.12s">
-          100% ABBruzzese. FORTE &amp; GENTILE. — Storie, emozioni e
-          territorio — dalla montagna al mare.
-        </p>
-      </div>
-    </div>
-    <div class="hero-stats">
-      <div class="wrap">
-        <div class="stats fu" style="transition-delay:.36s">
-          <div class="stat">
-            <div class="snum" data-target="83" data-suffix="K">83K</div>
-            <div class="slbl">Follower IG</div>
-          </div>
-          <div class="stat">
-            <div class="snum" data-target="37" data-suffix="K">37K</div>
-            <div class="slbl">Follower TikTok</div>
-          </div>
-          <div class="stat">
-            <div class="snum" data-target="100" data-suffix="+">100+</div>
-            <div class="slbl">Eventi</div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -482,16 +461,13 @@
       <p class="eyebrow fu">Newsletter</p>
       <h2 class="stitle fu" style="transition-delay:.1s">Resta nel giro</h2>
       <p class="sbody fu" style="transition-delay:.2s">
-        Ricevi in anteprima notizie sugli eventi, le collaborazioni e tutto
-        quello che succede nel mondo di Abruzzese Medio. Niente spam —
-        solo roba che vale.
+        Ricevi l'Abruzzo sulla casella mail 2 volte al mese.
       </p>
       <!-- SOSTITUIRE CON ENDPOINT BREVO -->
       <form class="nl-form fu" action="#" method="post" style="transition-delay:.3s">
         <input class="nl-in" type="email" name="email" placeholder="La tua email" required>
         <button class="nl-btn" type="submit">Iscriviti</button>
       </form>
-      <p class="nl-note fu" style="transition-delay:.4s">Niente spam. Parola di abruzzese.</p>
     </div>
   </section>
 
