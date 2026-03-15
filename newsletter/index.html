@@ -267,7 +267,7 @@
     setStatus('Ricerca notizie in corso…', true);
 
     try {
-      const res = await fetch('/newsletter/api/generate', {
+      const res = await fetch('https://abbruzzesemedio-production.up.railway.app/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

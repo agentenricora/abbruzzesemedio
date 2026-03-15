@@ -35,6 +35,6 @@ app.post('/generate', async (req, res) => {
   }
 });
 
-app.listen(PORT, '127.0.0.1', () => {
-  console.log(`Newsletter API in ascolto su http://127.0.0.1:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Newsletter API in ascolto su porta ${PORT}`);
 });
