@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AM Newsletter Agent</title>
+  <!-- DOMPurify per sanitizzare l'output AI prima di inserirlo nel DOM -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --panel: #1a1a1a;
+      --border: #2a2a2a;
+      --green: #2B8B4A;
+      --green-light: #3AAD5E;
+      --yellow: #f5b73d;
+      --text: #e8e8e8;
+      --muted: #888;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .topbar {
+      background: #0d2818;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .topbar-logo { font-size: 18px; font-weight: 700; color: var(--yellow); letter-spacing: 0.03em; }
+    .topbar-sub  { font-size: 13px; color: var(--muted); }
+
+    .layout { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── PANNELLO SINISTRA ── */
+    .panel {
+      width: 280px;
+      flex-shrink: 0;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 20px;
+      gap: 20px;
+      overflow-y: auto;
+    }
+    .panel label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .panel textarea {
+      width: 100%;
+      min-height: 140px;
+      background: #111;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text);
+      resize: vertical;
+      outline: none;
+      line-height: 1.6;
+      transition: border-color 0.2s;
+    }
+    .panel textarea:focus { border-color: var(--green); }
+    .panel textarea::placeholder { color: #444; }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-secondary { background: #222; color: var(--text); border: 1px solid var(--border); font-size: 13px; }
+    .btn-secondary:hover { background: #2a2a2a; }
+
+    .status {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 20px;
+    }
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--green-light);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .copy-btns { display: flex; flex-direction: column; gap: 8px; }
+    .copy-btns.hidden { display: none; }
+    .divider { border: none; border-top: 1px solid var(--border); }
+
+    /* ── ANTEPRIMA ── */
+    .preview-wrap { flex: 1; overflow-y: auto; background: #888; padding: 32px; }
+    #newsletter-preview {
+      max-width: 640px;
+      margin: 0 auto;
+      background: #fff;
+      font-family: Georgia, 'Times New Roman', serif;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+    }
+
+    /* ══ TEMPLATE NEWSLETTER ══ */
+    .nl-header { background: #0d2818; padding: 32px 40px 28px; text-align: center; }
+    .nl-badge {
+      display: inline-block;
+      background: #f5b73d; color: #0d2818;
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 10px; font-weight: 800;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 100px; margin-bottom: 14px;
+    }
+    .nl-title { font-family: 'Segoe UI', sans-serif; font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .nl-week  { font-family: 'Segoe UI', sans-serif; font-size: 13px; color: rgba(255,255,255,0.5); letter-spacing: 0.06em; }
+
+    .nl-intro { background: #fdf8f0; padding: 28px 40px; border-bottom: 2px solid #f0e8d8; }
+    .nl-intro p { font-size: 16px; line-height: 1.8; color: #4a3728; font-style: italic; }
+
+    .nl-section { padding: 32px 40px; border-bottom: 1px solid #eee; }
+    .nl-section-title {
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 11px; font-weight: 800;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: #2B8B4A; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nl-section-title::after { content: ''; flex: 1; height: 1px; background: #eee; }
+
+    .nl-news-item { margin-bottom: 20px; }
+    .nl-news-item:last-child { margin-bottom: 0; }
+    .nl-news-title { font-family: 'Segoe UI', sans-serif; font-size: 15px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+    .nl-news-text  { font-size: 14px; line-height: 1.75; color: #555; }
+
+    .nl-roberto { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .nl-roberto-col h4 {
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: #999; margin-bottom: 10px;
+    }
+    .nl-roberto-col p { font-size: 14px; line-height: 1.75; color: #444; }
+
+    .nl-stat-box { background: #0d2818; padding: 32px 40px; text-align: center; border-bottom: 1px solid #eee; }
+    .nl-stat-number { font-family: 'Segoe UI', sans-serif; font-size: 56px; font-weight: 900; color: #f5b73d; line-height: 1; margin-bottom: 8px; }
+    .nl-stat-label  { font-family: 'Segoe UI', sans-serif; font-size: 13px; color: rgba(255,255,255,0.6); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
+    .nl-stat-comment { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.6; max-width: 400px; margin: 0 auto; font-style: italic; }
+
+    .nl-cta { background: #f5b73d; padding: 36px 40px; text-align: center; border-bottom: 1px solid #e8a82a; }
+    .nl-cta-title { font-family: 'Segoe UI', sans-serif; font-size: 22px; font-weight: 800; color: #0d2818; margin-bottom: 12px; }
+    .nl-cta-text  { font-size: 15px; line-height: 1.7; color: #1a3d20; margin-bottom: 24px; max-width: 460px; margin-left: auto; margin-right: auto; }
+    .nl-cta-btn {
+      display: inline-block; background: #0d2818; color: #f5b73d;
+      font-family: 'Segoe UI', sans-serif; font-size: 14px; font-weight: 700;
+      padding: 14px 32px; border-radius: 100px; text-decoration: none;
+    }
+
+    .nl-footer { background: #1a1a1a; padding: 24px 40px; text-align: center; }
+    .nl-footer p { font-family: 'Segoe UI', sans-serif; font-size: 12px; color: #666; line-height: 2; }
+    .nl-footer a { color: #888; text-decoration: none; }
+
+    .nl-placeholder {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 400px; color: #aaa;
+      font-family: 'Segoe UI', sans-serif; font-size: 15px;
+      text-align: center; flex-direction: column; gap: 12px;
+    }
+    .nl-placeholder svg { opacity: 0.3; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">AM Newsletter Agent</div>
+  <div class="topbar-sub">— Abruzzese Medio</div>
+</div>
+
+<div class="layout">
+  <aside class="panel">
+    <div>
+      <label>Note per questa uscita</label>
+      <textarea id="notes" placeholder="es. abbiamo fatto una diretta a Pescara mercoledì&#10;evento in arrivo a L'Aquila il 20&#10;collaborazione con ristorante X"></textarea>
+    </div>
+    <button class="btn btn-primary" id="btn-generate" onclick="genera()">Genera newsletter</button>
+    <div class="status" id="status"></div>
+    <hr class="divider">
+    <div class="copy-btns hidden" id="copy-btns">
+      <label>Esporta</label>
+      <button class="btn btn-secondary" onclick="copiaHTML()">Copia HTML</button>
+      <button class="btn btn-secondary" onclick="copiaTesto()">Copia testo puro</button>
+    </div>
+  </aside>
+
+  <main class="preview-wrap">
+    <div id="newsletter-preview">
+      <div class="nl-placeholder">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        <span>Clicca "Genera newsletter" per iniziare</span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Tutti i valori dall'AI passano per DOMPurify prima di entrare nel DOM
+  function safe(str) {
+    return DOMPurify.sanitize(String(str || ''), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+  }
+
+  function setStatus(msg, loading = false) {
+    const el = document.getElementById('status');
+    if (loading) {
+      const spinner = document.createElement('div');
+      spinner.className = 'spinner';
+      const span = document.createElement('span');
+      span.textContent = msg;
+      el.replaceChildren(spinner, span);
+    } else {
+      el.textContent = msg;
+    }
+  }
+
+  async function genera() {
+    const notes = document.getElementById('notes').value.trim();
+    const btn = document.getElementById('btn-generate');
+    const copyBtns = document.getElementById('copy-btns');
+
+    btn.disabled = true;
+    copyBtns.classList.add('hidden');
+    setStatus('Ricerca notizie in corso…', true);
+
+    try {
+      const res = await fetch('/newsletter/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 2000,
+          system: `Sei un assistente che prepara contenuti per la newsletter bisettimanale di "Abruzzese Medio", profilo social di Roberto Pavone (Instagram @abruzzesemedio 83k follower, TikTok @abbruzzesemedio 37k follower, Facebook Abbruzzesemedio 81k follower). Il referente commerciale è Enrico Emanuele Corazzini (enricora99@gmail.com, +39 345 238 9772).
+
+Compito:
+1. Cerca notizie, eventi e curiosità recenti sull'Abruzzo utili per attività commerciali
+2. Cerca aggiornamenti recenti dai profili Abruzzese Medio / Roberto Pavone
+3. Costruisci contenuti newsletter per TITOLARI DI ATTIVITÀ COMMERCIALI abruzzesi (locali, ristoranti, organizzatori eventi, brand) potenzialmente interessati a collaborare
+
+Tono: diretto, territoriale, ironico ma professionale.
+
+RISPONDI SOLO con JSON valido senza markdown né backtick:
+{
+  "settimana": "es. 10-16 marzo 2026",
+  "intro": "1-2 righe apertura in tono Abruzzese Medio",
+  "notizie": [
+    {"titolo": "titolo notizia", "testo": "2-3 frasi utili per un'attività commerciale"}
+  ],
+  "roberto": {
+    "recap": "cosa ha fatto Roberto nell'ultima settimana",
+    "prossimi": "prossimi eventi o appuntamenti noti"
+  },
+  "stat": {
+    "numero": "es. 9,7 mln",
+    "label": "visualizzazioni ultimi 30 giorni",
+    "commento": "perché questo numero conta per un'azienda locale"
+  },
+  "cta": {
+    "titolo": "titolo call to action commerciale",
+    "testo": "2-3 righe che invitano le attività a collaborare"
+  }
+}`,
+          tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+          messages: [{
+            role: 'user',
+            content: `Oggi è ${new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}. Genera la newsletter per la prossima uscita bisettimanale.\n\nNote del referente:\n${notes || 'Nessuna nota specifica.'}\n\nCerca notizie sull'Abruzzo e aggiornamenti di Abruzzese Medio, poi genera il JSON.`
+          }]
+        })
+      });
+
+      setStatus('Elaborazione risposta…', true);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error?.message || data.error || `Errore ${res.status}`);
+
+      let rawText = '';
+      for (const block of (data.content || [])) {
+        if (block.type === 'text') rawText += block.text;
+      }
+
+      const match = rawText.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('Nessun JSON trovato nella risposta');
+
+      const d = JSON.parse(match[0]);
+      renderNewsletter(d);
+      copyBtns.classList.remove('hidden');
+      setStatus('✓ Newsletter generata');
+
+    } catch (err) {
+      setStatus('⚠ ' + err.message);
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function renderNewsletter(d) {
+    const preview = document.getElementById('newsletter-preview');
+
+    // Costruisce il DOM senza innerHTML per i valori dinamici
+    // usa textContent per testo puro, DOMPurify per campi che potrebbero avere markup
+
+    const notizie = (d.notizie || []).map(n => {
+      const item = document.createElement('div');
+      item.className = 'nl-news-item';
+      const title = document.createElement('div');
+      title.className = 'nl-news-title';
+      title.textContent = safe(n.titolo);
+      const text = document.createElement('div');
+      text.className = 'nl-news-text';
+      text.textContent = safe(n.testo);
+      item.append(title, text);
+      return item;
+    });
+
+    // Template statico (nessun dato utente) + nodi dinamici appesi dopo
+    preview.innerHTML = DOMPurify.sanitize(`
+      <div class="nl-header">
+        <div class="nl-badge">Newsletter Commerciale</div>
+        <div class="nl-title">Abruzzese Medio</div>
+        <div class="nl-week" id="_week"></div>
+      </div>
+      <div class="nl-intro"><p id="_intro"></p></div>
+      <div class="nl-section">
+        <div class="nl-section-title">Cosa bolle in Abruzzo</div>
+        <div id="_notizie"></div>
+      </div>
+      <div class="nl-section">
+        <div class="nl-section-title">Roberto c'era / ci sarà</div>
+        <div class="nl-roberto">
+          <div class="nl-roberto-col"><h4>Settimana scorsa</h4><p id="_recap"></p></div>
+          <div class="nl-roberto-col"><h4>Prossimi appuntamenti</h4><p id="_prossimi"></p></div>
+        </div>
+      </div>
+      <div class="nl-stat-box">
+        <div class="nl-stat-number" id="_statnum"></div>
+        <div class="nl-stat-label" id="_statlbl"></div>
+        <div class="nl-stat-comment" id="_statcom"></div>
+      </div>
+      <div class="nl-cta">
+        <div class="nl-cta-title" id="_ctatitle"></div>
+        <div class="nl-cta-text" id="_ctatext"></div>
+        <a class="nl-cta-btn" href="mailto:enricora99@gmail.com">Scrivici</a>
+      </div>
+      <div class="nl-footer">
+        <p>
+          <strong style="color:#aaa">Abruzzese Medio</strong><br>
+          Enrico Emanuele Corazzini<br>
+          <a href="mailto:enricora99@gmail.com">enricora99@gmail.com</a> ·
+          <a href="tel:+393452389772">+39 345 238 9772</a>
+        </p>
+      </div>`);
+
+    // Assegna valori via textContent — nessun rischio XSS
+    preview.querySelector('#_week').textContent    = safe(d.settimana);
+    preview.querySelector('#_intro').textContent   = safe(d.intro);
+    preview.querySelector('#_recap').textContent   = safe(d.roberto?.recap);
+    preview.querySelector('#_prossimi').textContent = safe(d.roberto?.prossimi);
+    preview.querySelector('#_statnum').textContent = safe(d.stat?.numero);
+    preview.querySelector('#_statlbl').textContent = safe(d.stat?.label);
+    preview.querySelector('#_statcom').textContent = safe(d.stat?.commento);
+    preview.querySelector('#_ctatitle').textContent = safe(d.cta?.titolo);
+    preview.querySelector('#_ctatext').textContent  = safe(d.cta?.testo);
+    notizie.forEach(n => preview.querySelector('#_notizie').appendChild(n));
+  }
+
+  function copiaHTML() {
+    const html = document.getElementById('newsletter-preview').innerHTML;
+    navigator.clipboard.writeText(html).then(() => setStatus('✓ HTML copiato'));
+  }
+
+  function copiaTesto() {
+    const text = document.getElementById('newsletter-preview').innerText;
+    navigator.clipboard.writeText(text).then(() => setStatus('✓ Testo copiato'));
+  }
+</script>
+</body>
+</html>
