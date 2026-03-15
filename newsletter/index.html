@@ -8,14 +8,17 @@
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
   <style>
     :root {
-      --bg: #0f0f0f;
-      --panel: #1a1a1a;
-      --border: #2a2a2a;
-      --green: #2B8B4A;
-      --green-light: #3AAD5E;
-      --yellow: #f5b73d;
-      --text: #e8e8e8;
-      --muted: #888;
+      --bg:           #07071a;
+      --panel:        #0d0d2b;
+      --border:       #1c1c42;
+      --blue:         #2f54d4;
+      --blue-light:   #6285ff;
+      --violet:       #7c3aed;
+      --violet-light: #a78bfa;
+      --gold:         #c9a84c;
+      --text:         #e8e8f8;
+      --muted:        #7878a8;
+      --grad:         linear-gradient(135deg, #2f54d4, #7c3aed);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,16 +34,16 @@
     }
 
     .topbar {
-      background: #0d2818;
-      border-bottom: 1px solid var(--border);
+      background: var(--grad);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
       padding: 14px 24px;
       display: flex;
       align-items: center;
       gap: 12px;
       flex-shrink: 0;
     }
-    .topbar-logo { font-size: 18px; font-weight: 700; color: var(--yellow); letter-spacing: 0.03em; }
-    .topbar-sub  { font-size: 13px; color: var(--muted); }
+    .topbar-logo { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 0.05em; }
+    .topbar-sub  { font-size: 13px; color: rgba(255,255,255,0.55); }
 
     .layout { display: flex; flex: 1; overflow: hidden; }
 
@@ -68,7 +71,7 @@
     .panel textarea {
       width: 100%;
       min-height: 140px;
-      background: #111;
+      background: #060616;
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 12px;
@@ -80,7 +83,7 @@
       line-height: 1.6;
       transition: border-color 0.2s;
     }
-    .panel textarea:focus { border-color: var(--green); }
+    .panel textarea:focus { border-color: var(--blue-light); }
     .panel textarea::placeholder { color: #444; }
 
     .btn {
@@ -95,11 +98,11 @@
       transition: opacity 0.2s, transform 0.1s;
     }
     .btn:active { transform: scale(0.98); }
-    .btn-primary { background: var(--green); color: #fff; }
+    .btn-primary { background: var(--grad); color: #fff; border: none; }
     .btn-primary:hover { opacity: 0.88; }
     .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-secondary { background: #222; color: var(--text); border: 1px solid var(--border); font-size: 13px; }
-    .btn-secondary:hover { background: #2a2a2a; }
+    .btn-secondary { background: transparent; color: var(--violet-light); border: 1px solid var(--border); font-size: 13px; }
+    .btn-secondary:hover { background: rgba(124,58,237,0.1); border-color: var(--violet); }
 
     .status {
       font-size: 13px;
@@ -112,7 +115,7 @@
     .spinner {
       width: 14px; height: 14px;
       border: 2px solid var(--border);
-      border-top-color: var(--green-light);
+      border-top-color: var(--blue-light);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       flex-shrink: 0;
@@ -134,17 +137,17 @@
     }
 
     /* ══ TEMPLATE NEWSLETTER ══ */
-    .nl-header { background: #0d2818; padding: 32px 40px 28px; text-align: center; }
+    .nl-header { background: linear-gradient(135deg, #0d1240 0%, #1a0a3e 100%); padding: 32px 40px 28px; text-align: center; }
     .nl-badge {
       display: inline-block;
-      background: #f5b73d; color: #0d2818;
+      background: linear-gradient(135deg, #2f54d4, #7c3aed); color: #fff;
       font-family: 'Segoe UI', sans-serif;
       font-size: 10px; font-weight: 800;
       letter-spacing: 0.18em; text-transform: uppercase;
       padding: 4px 14px; border-radius: 100px; margin-bottom: 14px;
     }
-    .nl-title { font-family: 'Segoe UI', sans-serif; font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 6px; }
-    .nl-week  { font-family: 'Segoe UI', sans-serif; font-size: 13px; color: rgba(255,255,255,0.5); letter-spacing: 0.06em; }
+    .nl-title { font-family: 'Segoe UI', sans-serif; font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: 0.04em; }
+    .nl-week  { font-family: 'Segoe UI', sans-serif; font-size: 13px; color: rgba(200,200,255,0.5); letter-spacing: 0.06em; }
 
     .nl-intro { background: #fdf8f0; padding: 28px 40px; border-bottom: 2px solid #f0e8d8; }
     .nl-intro p { font-size: 16px; line-height: 1.8; color: #4a3728; font-style: italic; }
@@ -154,7 +157,7 @@
       font-family: 'Segoe UI', sans-serif;
       font-size: 11px; font-weight: 800;
       letter-spacing: 0.2em; text-transform: uppercase;
-      color: #2B8B4A; margin-bottom: 20px;
+      color: #2f54d4; margin-bottom: 20px;
       display: flex; align-items: center; gap: 10px;
     }
     .nl-section-title::after { content: ''; flex: 1; height: 1px; background: #eee; }
@@ -173,23 +176,23 @@
     }
     .nl-roberto-col p { font-size: 14px; line-height: 1.75; color: #444; }
 
-    .nl-stat-box { background: #0d2818; padding: 32px 40px; text-align: center; border-bottom: 1px solid #eee; }
-    .nl-stat-number { font-family: 'Segoe UI', sans-serif; font-size: 56px; font-weight: 900; color: #f5b73d; line-height: 1; margin-bottom: 8px; }
-    .nl-stat-label  { font-family: 'Segoe UI', sans-serif; font-size: 13px; color: rgba(255,255,255,0.6); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
-    .nl-stat-comment { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.6; max-width: 400px; margin: 0 auto; font-style: italic; }
+    .nl-stat-box { background: linear-gradient(135deg, #0d1240, #1a0a3e); padding: 32px 40px; text-align: center; border-bottom: 1px solid #eee; }
+    .nl-stat-number { font-family: 'Segoe UI', sans-serif; font-size: 56px; font-weight: 900; color: #a78bfa; line-height: 1; margin-bottom: 8px; }
+    .nl-stat-label  { font-family: 'Segoe UI', sans-serif; font-size: 13px; color: rgba(200,200,255,0.55); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
+    .nl-stat-comment { font-size: 14px; color: rgba(220,220,255,0.75); line-height: 1.6; max-width: 400px; margin: 0 auto; font-style: italic; }
 
-    .nl-cta { background: #f5b73d; padding: 36px 40px; text-align: center; border-bottom: 1px solid #e8a82a; }
-    .nl-cta-title { font-family: 'Segoe UI', sans-serif; font-size: 22px; font-weight: 800; color: #0d2818; margin-bottom: 12px; }
-    .nl-cta-text  { font-size: 15px; line-height: 1.7; color: #1a3d20; margin-bottom: 24px; max-width: 460px; margin-left: auto; margin-right: auto; }
+    .nl-cta { background: linear-gradient(135deg, #2f54d4, #7c3aed); padding: 36px 40px; text-align: center; border-bottom: none; }
+    .nl-cta-title { font-family: 'Segoe UI', sans-serif; font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .nl-cta-text  { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.82); margin-bottom: 24px; max-width: 460px; margin-left: auto; margin-right: auto; }
     .nl-cta-btn {
-      display: inline-block; background: #0d2818; color: #f5b73d;
+      display: inline-block; background: #fff; color: #2f54d4;
       font-family: 'Segoe UI', sans-serif; font-size: 14px; font-weight: 700;
       padding: 14px 32px; border-radius: 100px; text-decoration: none;
     }
 
-    .nl-footer { background: #1a1a1a; padding: 24px 40px; text-align: center; }
-    .nl-footer p { font-family: 'Segoe UI', sans-serif; font-size: 12px; color: #666; line-height: 2; }
-    .nl-footer a { color: #888; text-decoration: none; }
+    .nl-footer { background: #0d1240; padding: 24px 40px; text-align: center; }
+    .nl-footer p { font-family: 'Segoe UI', sans-serif; font-size: 12px; color: rgba(200,200,255,0.45); line-height: 2; }
+    .nl-footer a { color: rgba(200,200,255,0.6); text-decoration: none; }
 
     .nl-placeholder {
       display: flex; align-items: center; justify-content: center;
