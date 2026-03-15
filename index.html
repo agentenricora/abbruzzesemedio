@@ -7,6 +7,8 @@
   <meta property="og:title" content="Abruzzese Medio">
   <meta property="og:description" content="100% ABBruzzese. FORTE & GENTILE. Storie, emozioni e territorio dalla montagna al mare.">
   <title>Abruzzese Medio</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpeg">
+  <link rel="apple-touch-icon" href="logo.jpeg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -52,6 +54,16 @@
       padding: 0 40px;
     }
 
+    /* ═══ LOGO ═══ */
+    .hero-logo {
+      width: clamp(260px, 40vw, 480px);
+      height: clamp(260px, 40vw, 480px);
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 48px;
+      display: block;
+    }
+
     /* ═══ FADE-UP ═══ */
     .fu {
       opacity: 0;
@@ -75,6 +87,7 @@
       display: flex;
       align-items: center;
       padding: 96px 0 64px;
+      text-align: center;
     }
 
     /* Badge */
@@ -127,6 +140,7 @@
       color: var(--muted);
       line-height: 1.8;
       max-width: 480px;
+      margin: 0 auto;
     }
 
     /* Stats */
@@ -435,14 +449,8 @@
   <section class="hero">
     <div class="hero-body">
       <div class="wrap">
-        <div class="badge fu">
-          <span class="bdot"></span>
-          Creator Digitale · Abruzzo
-        </div>
-        <h1 class="htitle fu" style="transition-delay:.12s">
-          Abruzzese<span>Medio</span>
-        </h1>
-        <p class="tagline fu" style="transition-delay:.24s">
+        <img class="hero-logo fu" src="logo.jpeg" alt="Abruzzese Medio">
+        <p class="tagline fu" style="transition-delay:.12s">
           100% ABBruzzese. FORTE &amp; GENTILE. — Storie, emozioni e
           territorio — dalla montagna al mare.
         </p>
@@ -458,10 +466,6 @@
           <div class="stat">
             <div class="snum" data-target="37" data-suffix="K">37K</div>
             <div class="slbl">Follower TikTok</div>
-          </div>
-          <div class="stat">
-            <div class="snum" data-target="9.7" data-suffix="M" data-dec="1">9,7M</div>
-            <div class="slbl">Views / mese</div>
           </div>
           <div class="stat">
             <div class="snum" data-target="100" data-suffix="+">100+</div>
@@ -491,38 +495,6 @@
     </div>
   </section>
 
-  <!-- ═══════ PILLARS ═══════ -->
-  <section class="pillars">
-    <div class="wrap">
-      <div class="pillars-hdr">
-        <p class="eyebrow fu">Cosa trovi qui</p>
-        <h2 class="stitle fu" style="transition-delay:.1s">Il mondo di<br>Abruzzese Medio</h2>
-      </div>
-      <div class="pgrid">
-        <div class="pcard fu">
-          <span class="picon">📍</span>
-          <div class="ptitle">Territorio</div>
-          <p class="ptext">L'Abruzzo raccontato dal di dentro, con autenticità e orgoglio regionale.</p>
-        </div>
-        <div class="pcard fu" style="transition-delay:.08s">
-          <span class="picon">🎤</span>
-          <div class="ptitle">Eventi</div>
-          <p class="ptext">Oltre 100 eventi, 2.000 studenti coinvolti, TV e giornali regionali.</p>
-        </div>
-        <div class="pcard fu" style="transition-delay:.16s">
-          <span class="picon">📲</span>
-          <div class="ptitle">Social</div>
-          <p class="ptext">Reach mensile da 2,9 milioni. Presente su Instagram, TikTok e Facebook.</p>
-        </div>
-        <div class="pcard fu" style="transition-delay:.24s">
-          <span class="picon">🤝</span>
-          <div class="ptitle">Partnership</div>
-          <p class="ptext">Collaborazioni su misura per realtà locali, eventi e brand affini al territorio.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ═══════ SOCIAL ═══════ -->
   <section class="social">
     <div class="wrap">
@@ -542,9 +514,7 @@
       <div class="foot">
         <div class="fbrand">Abruzzese Medio</div>
         <div class="finfo">
-          <a href="mailto:abruzzesemedio@gmail.com">abruzzesemedio@gmail.com</a><br>
-          Referente commerciale: <strong>Enrico Corazzini</strong><br>
-          <a href="tel:+393452389772">+39 345 238 9772</a>
+          <a href="mailto:abruzzesemedio@gmail.com">abruzzesemedio@gmail.com</a>
         </div>
       </div>
     </div>
