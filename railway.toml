@@ -1,6 +1,5 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd newsletter/api && npm install"
 
 [deploy]
 startCommand = "node newsletter/api/server.js"
