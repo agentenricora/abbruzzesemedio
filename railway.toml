@@ -1,6 +1,2 @@
 [build]
-builder = "dockerfile"
-dockerfilePath = "newsletter/api/Dockerfile"
-
-[deploy]
-startCommand = "node server.js"
+builder = "nixpacks"
