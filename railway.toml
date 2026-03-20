@@ -1,6 +1,6 @@
 [build]
-builder = "nixpacks"
-buildCommand = "cd newsletter/api && npm install"
+builder = "dockerfile"
+dockerfilePath = "newsletter/api/Dockerfile"
 
 [deploy]
-startCommand = "node newsletter/api/server.js"
+startCommand = "node server.js"
