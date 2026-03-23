@@ -312,20 +312,31 @@
   }
 
   // ── SCHEDE ─────────────────────────────────────────────
-  const STORAGE_KEY = 'am_schede';
+  const API = 'https://abbruzzesemedio-api.onrender.com';
   let schede = [];
   let dragSrcIndex = null;
+  let saveTimer = null;
 
-  function loadSchede() {
+  async function loadSchede() {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      schede = saved ? JSON.parse(saved) : [];
+      const res = await fetch(`${API}/schede`);
+      schede = await res.json();
     } catch { schede = []; }
     renderSchede();
   }
 
   function saveSchede() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(schede));
+    // Debounce: salva sul server 800ms dopo l'ultima modifica
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try {
+        await fetch(`${API}/schede`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(schede)
+        });
+      } catch (e) { console.error('Errore salvataggio schede:', e); }
+    }, 800);
   }
 
   function addScheda() {
@@ -605,7 +616,7 @@ RISPONDI SOLO con JSON valido senza markdown né backtick:
     navigator.clipboard.writeText(text).then(() => setStatus('✓ Testo copiato'));
   }
 
-  // Carica schede salvate all'avvio
+  // Carica schede dal server all'avvio
   loadSchede();
 </script>
 </body>
