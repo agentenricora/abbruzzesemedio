@@ -126,6 +126,61 @@
     .copy-btns.hidden { display: none; }
     .divider { border: none; border-top: 1px solid var(--border); }
 
+    /* ── SCHEDE ── */
+    #schede-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+
+    .scheda-card {
+      background: #060616;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 10px 10px 8px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      transition: border-color 0.15s, opacity 0.15s;
+    }
+    .scheda-card.dragging  { opacity: 0.4; }
+    .scheda-card.drag-over { border-color: var(--blue-light); background: rgba(47,84,212,0.08); }
+
+    .scheda-handle {
+      cursor: grab; color: var(--muted); font-size: 16px;
+      line-height: 1; padding-top: 3px; user-select: none; flex-shrink: 0;
+    }
+    .scheda-handle:active { cursor: grabbing; }
+
+    .scheda-body { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+    .scheda-titolo {
+      background: transparent; border: none;
+      border-bottom: 1px solid var(--border);
+      color: var(--text); font-family: inherit; font-size: 13px; font-weight: 600;
+      padding: 2px 0 4px; width: 100%; outline: none;
+    }
+    .scheda-titolo:focus { border-color: var(--blue-light); }
+    .scheda-titolo::placeholder { color: #444; font-weight: 400; }
+
+    .scheda-testo {
+      background: transparent; border: none; color: #b0b0d0;
+      font-family: inherit; font-size: 12px; line-height: 1.6;
+      resize: none; width: 100%; outline: none; min-height: 48px; overflow: hidden;
+    }
+    .scheda-testo::placeholder { color: #444; }
+
+    .scheda-del {
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      font-size: 16px; line-height: 1; padding: 2px 0 0; flex-shrink: 0;
+      opacity: 0.5; transition: opacity 0.15s;
+    }
+    .scheda-del:hover { opacity: 1; color: #ff6b6b; }
+
+    .btn-add-scheda {
+      width: 100%; padding: 8px; background: transparent;
+      border: 1px dashed var(--border); border-radius: 8px;
+      color: var(--muted); font-family: inherit; font-size: 12px; cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-add-scheda:hover { border-color: var(--violet); color: var(--violet-light); }
+
     /* ── ANTEPRIMA ── */
     .preview-wrap { flex: 1; overflow-y: auto; background: #888; padding: 32px; }
     #newsletter-preview {
@@ -212,10 +267,22 @@
 
 <div class="layout">
   <aside class="panel">
+
+    <!-- SCHEDE -->
     <div>
-      <label>Note per questa uscita</label>
-      <textarea id="notes" placeholder="es. abbiamo fatto una diretta a Pescara mercoledì&#10;evento in arrivo a L'Aquila il 20&#10;collaborazione con ristorante X"></textarea>
+      <label>Schede contenuto</label>
+      <div id="schede-list"></div>
+      <button class="btn-add-scheda" onclick="addScheda()">+ Aggiungi scheda</button>
     </div>
+
+    <hr class="divider">
+
+    <!-- NOTE LIBERE -->
+    <div>
+      <label>Note aggiuntive</label>
+      <textarea id="notes" placeholder="es. diretta a Pescara mercoledì&#10;evento a L'Aquila il 20&#10;collaborazione con ristorante X"></textarea>
+    </div>
+
     <button class="btn btn-primary" id="btn-generate" onclick="genera()">Genera newsletter</button>
     <div class="status" id="status"></div>
     <hr class="divider">
@@ -244,6 +311,121 @@
     return DOMPurify.sanitize(String(str || ''), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
   }
 
+  // ── SCHEDE ─────────────────────────────────────────────
+  const STORAGE_KEY = 'am_schede';
+  let schede = [];
+  let dragSrcIndex = null;
+
+  function loadSchede() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      schede = saved ? JSON.parse(saved) : [];
+    } catch { schede = []; }
+    renderSchede();
+  }
+
+  function saveSchede() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(schede));
+  }
+
+  function addScheda() {
+    schede.push({ id: Date.now(), titolo: '', testo: '' });
+    saveSchede();
+    renderSchede();
+    const inputs = document.querySelectorAll('.scheda-titolo');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }
+
+  function deleteScheda(idx) {
+    schede.splice(idx, 1);
+    saveSchede();
+    renderSchede();
+  }
+
+  function updateScheda(idx, field, value) {
+    schede[idx][field] = value;
+    saveSchede();
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }
+
+  function renderSchede() {
+    const list = document.getElementById('schede-list');
+    list.innerHTML = '';
+
+    schede.forEach((s, idx) => {
+      const card = document.createElement('div');
+      card.className = 'scheda-card';
+      card.draggable = true;
+      card.dataset.idx = idx;
+
+      const handle = document.createElement('div');
+      handle.className = 'scheda-handle';
+      handle.textContent = '⠿';
+      handle.title = 'Trascina per riordinare';
+
+      const body = document.createElement('div');
+      body.className = 'scheda-body';
+
+      const titolo = document.createElement('input');
+      titolo.className = 'scheda-titolo';
+      titolo.type = 'text';
+      titolo.placeholder = 'Titolo scheda…';
+      titolo.value = s.titolo;
+      titolo.oninput = () => updateScheda(idx, 'titolo', titolo.value);
+
+      const testo = document.createElement('textarea');
+      testo.className = 'scheda-testo';
+      testo.placeholder = 'Contenuto, notizia, spunto…';
+      testo.value = s.testo;
+      testo.rows = 3;
+      testo.oninput = () => { updateScheda(idx, 'testo', testo.value); autoResize(testo); };
+      setTimeout(() => autoResize(testo), 0);
+
+      body.append(titolo, testo);
+
+      const del = document.createElement('button');
+      del.className = 'scheda-del';
+      del.textContent = '×';
+      del.title = 'Elimina scheda';
+      del.onclick = () => deleteScheda(idx);
+
+      card.append(handle, body, del);
+
+      card.addEventListener('dragstart', e => {
+        dragSrcIndex = idx;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => card.classList.add('dragging'), 0);
+      });
+      card.addEventListener('dragend', () => {
+        dragSrcIndex = null;
+        document.querySelectorAll('.scheda-card').forEach(c => c.classList.remove('dragging', 'drag-over'));
+      });
+      card.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        document.querySelectorAll('.scheda-card').forEach(c => c.classList.remove('drag-over'));
+        card.classList.add('drag-over');
+      });
+      card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+      card.addEventListener('drop', e => {
+        e.preventDefault();
+        card.classList.remove('drag-over');
+        if (dragSrcIndex === null || dragSrcIndex === idx) return;
+        const moved = schede.splice(dragSrcIndex, 1)[0];
+        schede.splice(idx, 0, moved);
+        dragSrcIndex = null;
+        saveSchede();
+        renderSchede();
+      });
+
+      list.appendChild(card);
+    });
+  }
+
   function setStatus(msg, loading = false) {
     const el = document.getElementById('status');
     if (loading) {
@@ -265,6 +447,13 @@
     btn.disabled = true;
     copyBtns.classList.add('hidden');
     setStatus('Ricerca notizie in corso…', true);
+
+    // Contesto dalle schede salvate
+    const schedeAttive = schede.filter(s => s.titolo || s.testo);
+    const schedeContext = schedeAttive.length > 0
+      ? '\n\nSchede preparate dal referente:\n' +
+        schedeAttive.map(s => `• ${s.titolo || 'Senza titolo'}: ${s.testo}`).join('\n')
+      : '';
 
     try {
       const res = await fetch('https://abbruzzesemedio-api.onrender.com/generate', {
@@ -306,7 +495,7 @@ RISPONDI SOLO con JSON valido senza markdown né backtick:
           tools: [{ type: 'web_search_20250305', name: 'web_search' }],
           messages: [{
             role: 'user',
-            content: `Oggi è ${new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}. Genera la newsletter per la prossima uscita bisettimanale.\n\nNote del referente:\n${notes || 'Nessuna nota specifica.'}\n\nCerca notizie sull'Abruzzo e aggiornamenti di Abruzzese Medio, poi genera il JSON.`
+            content: `Oggi è ${new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}. Genera la newsletter per la prossima uscita bisettimanale.${schedeContext}\n\nNote aggiuntive del referente:\n${notes || 'Nessuna nota specifica.'}\n\nCerca notizie sull'Abruzzo e aggiornamenti di Abruzzese Medio, poi genera il JSON.`
           }]
         })
       });
@@ -415,6 +604,9 @@ RISPONDI SOLO con JSON valido senza markdown né backtick:
     const text = document.getElementById('newsletter-preview').innerText;
     navigator.clipboard.writeText(text).then(() => setStatus('✓ Testo copiato'));
   }
+
+  // Carica schede salvate all'avvio
+  loadSchede();
 </script>
 </body>
 </html>
